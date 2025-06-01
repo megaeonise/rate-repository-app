@@ -1,7 +1,11 @@
+{
+  /* <script src="http://localhost:8097"></script>; */
+}
+
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-
 export default function App() {
+  console.log("test");
   return (
     <View style={styles.container}>
       <Text>
