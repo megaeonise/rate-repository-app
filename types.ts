@@ -9,3 +9,8 @@ export interface Repository {
   reviewCount: number;
   ownerAvatarUrl: string;
 }
+
+export interface Values {
+  username: string;
+  password: string;
+}
