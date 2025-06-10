@@ -1,7 +1,7 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import Constants from "expo-constants";
 import theme from "../theme";
-import Text from "./Text";
+import AppBarTab from "./AppBarTab";
 
 const styles = StyleSheet.create({
   flexContainer: {
@@ -22,16 +22,8 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   return (
     <View style={styles.flexContainer}>
-      <Pressable
-        style={styles.flexItem}
-        onTouchStart={() => {
-          console.log("pressed");
-        }}
-      >
-        <Text fontSize="subheading" fontWeight="bold" color="white">
-          Repositories
-        </Text>
-      </Pressable>
+      <AppBarTab item="Repository" link="/" />
+      <AppBarTab item="Sign In" link="/signin" />
     </View>
   );
 };
