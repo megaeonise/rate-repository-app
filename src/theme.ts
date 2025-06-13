@@ -10,6 +10,7 @@ const theme = {
     primary: "#0366d6",
     grey: "#24292e",
     white: "white",
+    red: "#d73a4a",
   },
   fontSizes: {
     body: 14,
