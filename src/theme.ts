@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 enum fontWeights {
   normal = "400",
   bold = "700",
@@ -17,7 +19,11 @@ const theme = {
     subheading: 16,
   },
   fonts: {
-    main: "System",
+    main: Platform.select({
+      android: "Roboto",
+      ios: "Arial",
+      default: "System",
+    }),
   },
   fontWeights: {
     normal: fontWeights.normal,
