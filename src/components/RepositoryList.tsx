@@ -65,7 +65,7 @@ const RepositoryList = () => {
 
   return (
     <FlatList
-      data={data ? repositoryNodes : repositoriesOffline}
+      data={data ? repositoryNodes : []}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={RepositoryItem}
       // other props
