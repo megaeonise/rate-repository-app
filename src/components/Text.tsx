@@ -57,7 +57,6 @@ const Text = ({
     backgroundColor === "blue" && styles.backgroundBlue,
     style,
   ];
-  console.log(textStyle);
 
   return (
     <NativeText style={textStyle} {...props}>
