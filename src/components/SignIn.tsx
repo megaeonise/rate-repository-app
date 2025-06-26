@@ -6,7 +6,6 @@ import { Values } from "../../types";
 import theme from "../theme";
 import * as yup from "yup";
 import useSignIn from "../hooks/useSignIn";
-import AuthStorage from "../utils/authStorage";
 
 const initialValues = {
   username: "",
@@ -96,14 +95,12 @@ const SignInForm = ({ onSubmit }: { onSubmit: (values: Values) => void }) => {
 
 const SignIn = () => {
   const [signIn] = useSignIn();
-  const authStorage = new AuthStorage();
   const onSubmit = async (values: Values) => {
     const { username, password } = values;
     try {
       //@ts-ignore
       const { data } = await signIn({ username, password });
-      console.log(data.authenticate.accessToken);
-      await authStorage.setAccessToken(data.authenticate.accessToken);
+      console.log(data, "in signin");
     } catch (e) {
       console.log(e);
     }
