@@ -14,16 +14,26 @@ const styles = StyleSheet.create({
 
 interface Props {
   item: string;
-  link: string;
+  link?: string;
+  onClick?: () => Promise<void>;
 }
 
-const AppBarTab = ({ item, link }: Props) => {
+const AppBarTab = ({ item, link, onClick }: Props) => {
+  if (link && !onClick) {
+    return (
+      <Link to={link} style={styles.flexItem}>
+        <Text fontSize="subheading" fontWeight="bold" color="white">
+          {item}
+        </Text>
+      </Link>
+    );
+  }
   return (
-    <Link to={link} style={styles.flexItem}>
+    <Pressable style={styles.flexItem} onPress={onClick}>
       <Text fontSize="subheading" fontWeight="bold" color="white">
         {item}
       </Text>
-    </Link>
+    </Pressable>
   );
 };
 

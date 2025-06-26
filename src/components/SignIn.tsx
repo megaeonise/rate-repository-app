@@ -6,6 +6,7 @@ import { Values } from "../../types";
 import theme from "../theme";
 import * as yup from "yup";
 import useSignIn from "../hooks/useSignIn";
+import { useNavigate } from "react-router-native";
 
 const initialValues = {
   username: "",
@@ -95,16 +96,16 @@ const SignInForm = ({ onSubmit }: { onSubmit: (values: Values) => void }) => {
 
 const SignIn = () => {
   const [signIn] = useSignIn();
+  const navigate = useNavigate();
   const onSubmit = async (values: Values) => {
     const { username, password } = values;
     try {
       //@ts-ignore
-      const { data } = await signIn({ username, password });
-      console.log(data, "in signin");
+      await signIn({ username, password });
+      navigate("/");
     } catch (e) {
       console.log(e);
     }
-    console.log(values);
   };
 
   return <SignInForm onSubmit={onSubmit} />;
