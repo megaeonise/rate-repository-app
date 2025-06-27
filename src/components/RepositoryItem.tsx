@@ -104,7 +104,7 @@ const RepositoryItem = ({ item }: Props) => {
       : String(item.ratingAverage);
 
   return (
-    <View key={item.id} style={styles.flexContainer}>
+    <View key={item.id} testID="repositoryItem" style={styles.flexContainer}>
       <View style={styles.flexItemImage}>
         <Image
           style={styles.imageDimensions}

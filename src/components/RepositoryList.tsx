@@ -57,20 +57,29 @@ const repositoriesOffline = [
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-const RepositoryList = () => {
-  const { data } = useRepositories();
-  const repositoryNodes = data
-    ? data.repositories.edges.map((edge: { node: any }) => edge.node)
+export const RepositoryListContainer = ({
+  repositories,
+}: {
+  repositories: { repositories: { edges: { node: any }[] } };
+}) => {
+  const repositoryNodes = repositories
+    ? repositories.repositories.edges.map((edge: { node: any }) => edge.node)
     : [];
 
   return (
     <FlatList
-      data={data ? repositoryNodes : []}
+      data={repositories ? repositoryNodes : []}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={RepositoryItem}
       // other props
     />
   );
+};
+
+const RepositoryList = () => {
+  const { data } = useRepositories();
+  console.log(data);
+  return <RepositoryListContainer repositories={data} />;
 };
 
 export default RepositoryList;

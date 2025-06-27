@@ -24,15 +24,18 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   const { data } = useMe();
   const signOut = useSignOut();
-  if (data.me) {
-    return (
-      <View style={styles.flexContainer}>
-        <ScrollView horizontal>
-          <AppBarTab item="Repository" link="/" />
-          <AppBarTab item="Sign Out" onClick={signOut} />
-        </ScrollView>
-      </View>
-    );
+  console.log(data);
+  if (data && data !== undefined) {
+    if (data.me) {
+      return (
+        <View style={styles.flexContainer}>
+          <ScrollView horizontal>
+            <AppBarTab item="Repository" link="/" />
+            <AppBarTab item="Sign Out" onClick={signOut} />
+          </ScrollView>
+        </View>
+      );
+    }
   }
   return (
     <View style={styles.flexContainer}>
