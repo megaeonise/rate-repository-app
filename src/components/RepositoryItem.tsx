@@ -1,10 +1,13 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Pressable } from "react-native";
 import { Repository } from "../../types";
 import Text from "./Text";
 import theme from "../theme";
+import { NavigateFunction } from "react-router-native";
+import * as Linking from "expo-linking";
 
 interface Props {
   item: Repository;
+  navigate?: NavigateFunction;
 }
 
 const styles = StyleSheet.create({
@@ -74,9 +77,25 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     maxWidth: 500,
   },
+  textBlueBoxButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 135,
+    borderColor: theme.colors.primary,
+    borderRadius: 4,
+    marginTop: 20,
+    marginBottom: 10,
+    flexGrow: 0,
+    backgroundColor: theme.colors.primary,
+    alignSelf: "center",
+    maxWidth: 1000,
+  },
 });
 
-const RepositoryItem = ({ item }: Props) => {
+const RepositoryItem = ({ item, navigate }: Props) => {
+  const onPress = () => {
+    if (navigate) navigate(`/${item.id}`);
+  };
+  console.log(item.url);
   //im writing a cursed nested ternary operator that will check if its greater than 1000 and after that it will check if the decimal is 0 then replace it
   let stars =
     item.stargazersCount >= 1000
@@ -102,7 +121,62 @@ const RepositoryItem = ({ item }: Props) => {
         ? (item.ratingAverage / 1000).toFixed(1).slice(0, -2) + "k"
         : (item.ratingAverage / 1000).toFixed(1) + "k"
       : String(item.ratingAverage);
-
+  if (navigate)
+    return (
+      <Pressable onPress={onPress}>
+        <View
+          key={item.id}
+          testID="repositoryItem"
+          style={styles.flexContainer}
+        >
+          <View style={styles.flexItemImage}>
+            <Image
+              style={styles.imageDimensions}
+              source={{ uri: item.ownerAvatarUrl }}
+            />
+            <View style={styles.flexItemDetails}>
+              <Text
+                style={styles.textMarginTopItem}
+                fontSize="subheading"
+                fontWeight="bold"
+              >
+                {item.fullName}
+              </Text>
+              <Text style={styles.textMarginTopItem}>{item.description}</Text>
+              <View style={styles.textBlueBoxItem}>
+                <Text color="white">{item.language}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.flexItemStatContainer}>
+            <View style={styles.flexItemStats}>
+              <Text fontWeight="bold" style={styles.textMarginItem}>
+                {stars}
+              </Text>
+              <Text style={styles.textMarginItem}>Stars</Text>
+            </View>
+            <View style={styles.flexItemStats}>
+              <Text fontWeight="bold" style={styles.textMarginItem}>
+                {forks}
+              </Text>
+              <Text style={styles.textMarginItem}>Forks</Text>
+            </View>
+            <View style={styles.flexItemStats}>
+              <Text fontWeight="bold" style={styles.textMarginItem}>
+                {reviews}
+              </Text>
+              <Text style={styles.textMarginItem}>Reviews</Text>
+            </View>
+            <View style={styles.flexItemStats}>
+              <Text fontWeight="bold" style={styles.textMarginItem}>
+                {ratings}
+              </Text>
+              <Text style={styles.textMarginItem}>Rating</Text>
+            </View>
+          </View>
+        </View>
+      </Pressable>
+    );
   return (
     <View key={item.id} testID="repositoryItem" style={styles.flexContainer}>
       <View style={styles.flexItemImage}>
@@ -150,6 +224,14 @@ const RepositoryItem = ({ item }: Props) => {
           <Text style={styles.textMarginItem}>Rating</Text>
         </View>
       </View>
+      <Pressable
+        style={styles.textBlueBoxButton}
+        onPress={() => {
+          Linking.openURL(item.url);
+        }}
+      >
+        <Text color="white">Open in Github</Text>
+      </Pressable>
     </View>
   );
 };

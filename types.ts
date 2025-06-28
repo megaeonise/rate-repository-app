@@ -8,6 +8,7 @@ export interface Repository {
   ratingAverage: number;
   reviewCount: number;
   ownerAvatarUrl: string;
+  url: string;
 }
 
 export interface Values {
