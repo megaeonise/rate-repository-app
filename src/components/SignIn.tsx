@@ -94,6 +94,10 @@ const SignInForm = ({ onSubmit }: { onSubmit: (values: Values) => void }) => {
   );
 };
 
+export const SignInContainer = ({ onSubmit }: any) => {
+  return <SignInForm onSubmit={onSubmit} />;
+};
+
 const SignIn = () => {
   const [signIn] = useSignIn();
   const navigate = useNavigate();
@@ -108,7 +112,7 @@ const SignIn = () => {
     }
   };
 
-  return <SignInForm onSubmit={onSubmit} />;
+  return <SignInContainer onSubmit={onSubmit} />;
 };
 
 export default SignIn;

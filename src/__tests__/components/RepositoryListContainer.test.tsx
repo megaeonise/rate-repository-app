@@ -1,6 +1,5 @@
 import { render, screen, within } from "@testing-library/react-native";
 import { RepositoryListContainer } from "../../components/RepositoryList";
-import { debug } from "@testing-library/react-native/build/helpers/debug";
 describe("RepositoryList", () => {
   describe("RepositoryListContainer", () => {
     it("renders repository information correctly", () => {
