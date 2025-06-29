@@ -31,6 +31,7 @@ const AppBar = () => {
         <View style={styles.flexContainer}>
           <ScrollView horizontal>
             <AppBarTab item="Repository" link="/" />
+            <AppBarTab item="Create a review" link="/review"/>
             <AppBarTab item="Sign Out" onClick={signOut} />
           </ScrollView>
         </View>

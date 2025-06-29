@@ -35,6 +35,8 @@ const styles = StyleSheet.create({
   },
   textErrorItem: {
     color: theme.colors.red,
+    alignSelf: "flex-start",
+    marginLeft: 40
   },
   textCenteredItem: {
     alignSelf: "center",
