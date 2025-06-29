@@ -1,8 +1,9 @@
 import { useQuery } from "@apollo/client";
-import { GET_REPOSITORY } from "../graphql/queries";
+import { GET_REVIEW } from "../graphql/queries";
 
-const useRepository = (id: string) => {
-  const { data, error, loading } = useQuery(GET_REPOSITORY, {
+const useReview = (id: string) => {
+    console.log(id, "in review")
+  const { data, error, loading } = useQuery(GET_REVIEW, {
     fetchPolicy: `cache-and-network`,
     variables: {
       id: id,
@@ -13,4 +14,4 @@ const useRepository = (id: string) => {
   return { error, loading };
 };
 
-export default useRepository;
+export default useReview;

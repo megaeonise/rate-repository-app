@@ -95,7 +95,6 @@ const RepositoryItem = ({ item, navigate }: Props) => {
   const onPress = () => {
     if (navigate) navigate(`/${item.id}`);
   };
-  console.log(item.url);
   //im writing a cursed nested ternary operator that will check if its greater than 1000 and after that it will check if the decimal is 0 then replace it
   let stars =
     item.stargazersCount >= 1000
