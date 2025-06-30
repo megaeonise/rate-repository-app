@@ -11,9 +11,7 @@ const useSignUp = () => {
   }
 
   const signUp = async ({ username, password }: signUpProps) => {
-    console.log(username, password);
     const data = await mutate({ variables: { user: { username, password } } });
-
     apolloClient.resetStore();
     return data;
   };

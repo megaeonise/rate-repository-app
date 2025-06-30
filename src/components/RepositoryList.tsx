@@ -1,11 +1,20 @@
 import { FlatList, View, StyleSheet } from "react-native";
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
+import { Picker } from "@react-native-picker/picker";
 import { NavigateFunction, useNavigate } from "react-router-native";
+import { useState } from "react";
+import theme from "../theme";
 
 const styles = StyleSheet.create({
   separator: {
     height: 10,
+  },
+  greyText: {
+    color: "grey",
+  },
+  blackText: {
+    color: theme.colors.textPrimary,
   },
 });
 
@@ -61,32 +70,86 @@ const ItemSeparator = () => <View style={styles.separator} />;
 interface Props {
   repositories: { repositories: { edges: { node: any }[] } };
   navigate: NavigateFunction;
+  sortRepository: () => React.JSX.Element;
 }
 
-export const RepositoryListContainer = ({ repositories, navigate }: Props) => {
+export const RepositoryListContainer = ({
+  repositories,
+  navigate,
+  sortRepository,
+}: Props) => {
   const repositoryNodes = repositories
     ? repositories.repositories.edges.map((edge: { node: any }) => edge.node)
     : [];
 
   return (
-    // <></>
     <FlatList
       data={repositories ? repositoryNodes : []}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={({ item }) => (
         <RepositoryItem item={item} navigate={navigate} />
       )}
+      ListHeaderComponent={sortRepository}
       // other props
     />
   );
 };
 
 const RepositoryList = () => {
-  const { data } = useRepositories();
+  const [sort, setSort] = useState(0);
+  const sortArray = [
+    ["CREATED_AT", "DESC"],
+    ["RATING_AVERAGE", "DESC"],
+    ["RATING_AVERAGE", "ASC"],
+  ];
+  const { data } = useRepositories({
+    orderBy: sortArray[sort][0],
+    orderDirection: sortArray[sort][1],
+  });
   const navigate = useNavigate();
 
+  const sortRepository = () => {
+    return (
+      <Picker
+        selectedValue={sort}
+        onValueChange={(itemValue, itemIndex) => {
+          if (itemValue !== 3) {
+            setSort(itemValue);
+          }
+        }}
+      >
+        <Picker.Item
+          style={styles.greyText}
+          label="Select an item..."
+          value={3}
+        />
+        <Picker.Item
+          style={styles.blackText}
+          label="Latest repositories"
+          value={0}
+        />
+        <Picker.Item
+          style={styles.blackText}
+          label="Highest rated repositories"
+          value={1}
+        />
+        <Picker.Item
+          style={styles.blackText}
+          label="Lowest rated repositories"
+          value={2}
+        />
+      </Picker>
+    );
+  };
+
   console.log(data);
-  return <RepositoryListContainer repositories={data} navigate={navigate} />;
+  return (
+    <RepositoryListContainer
+      repositories={data}
+      navigate={navigate}
+      sortRepository={sortRepository}
+    />
+  );
 };
 
 export default RepositoryList;

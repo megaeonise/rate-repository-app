@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   const { data } = useMe();
   const signOut = useSignOut();
-  console.log(data);
   if (data && data !== undefined) {
     if (data.me) {
       return (
