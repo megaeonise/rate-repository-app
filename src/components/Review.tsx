@@ -5,14 +5,15 @@ import TextInput from "./TextInput";
 import { ReviewValues } from "../../types";
 import theme from "../theme";
 import * as yup from "yup";
-import useSignIn from "../hooks/useSignIn";
-import { useNavigate } from "react-router-native";
+import useCreateReview from "../hooks/useCreateReview";
+import { useState } from "react";
+import { ApolloError } from "@apollo/client";
 
 const initialValues = {
-  repoOwnerName: "",
-  repoName: "",
+  ownerName: "",
+  repositoryName: "",
   rating: "",
-  review: ""
+  text: "",
 };
 
 const styles = StyleSheet.create({
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   textErrorItem: {
     color: theme.colors.red,
     alignSelf: "flex-start",
-    marginLeft: 40
+    marginHorizontal: 40,
   },
   textCenteredItem: {
     alignSelf: "center",
@@ -46,46 +47,62 @@ const styles = StyleSheet.create({
 });
 
 const validationSchema = yup.object().shape({
-  repoOwnerName: yup
-    .string()
-    .required("Repository owner name is required"),
-  repoName: yup
-    .string()
-    .required("Repository name is required"),
-  rating: yup.number().typeError("Rating must be a number").min(0, "Rating must be greater than or equal to 0").max(100, "Rating must be less than or equal to 100").required("Rating is required"),
-  review: yup.string()
+  ownerName: yup.string().required("Repository owner name is required"),
+  repositoryName: yup.string().required("Repository name is required"),
+  rating: yup
+    .number()
+    .typeError("Rating must be a number")
+    .min(0, "Rating must be greater than or equal to 0")
+    .max(100, "Rating must be less than or equal to 100")
+    .required("Rating is required"),
+  text: yup.string(),
 });
 
-const ReviewForm = ({ onSubmit }: { onSubmit: (values: ReviewValues) => void }) => {
+interface reviewFormProps {
+  onSubmit: (values: ReviewValues) => void;
+  error: string;
+}
+
+interface reviewContainerProps {
+  onSubmit: (values: ReviewValues) => Promise<void>;
+  error: string;
+}
+
+const ReviewForm = ({ onSubmit, error }: reviewFormProps) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit,
   });
-
   return (
     <View style={styles.flexContainer}>
       <TextInput
-        error={formik.touched.repoOwnerName && formik.errors.repoOwnerName ? true : false}
+        error={
+          formik.touched.ownerName && formik.errors.ownerName ? true : false
+        }
         options={{
           placeholder: "Repository owner name",
-          value: formik.values.repoOwnerName,
-          onChangeText: formik.handleChange("repoOwnerName"),
+          value: formik.values.ownerName,
+          onChangeText: formik.handleChange("ownerName"),
         }}
       />
-      {formik.touched.repoOwnerName && formik.errors.repoOwnerName && (
-        <Text style={styles.textErrorItem}>{formik.errors.repoOwnerName}</Text>
+      {formik.touched.ownerName && formik.errors.ownerName && (
+        <Text style={styles.textErrorItem}>{formik.errors.ownerName}</Text>
       )}
       <TextInput
-        error={formik.touched.repoName && formik.errors.repoName ? true : false}
+        error={
+          formik.touched.repositoryName && formik.errors.repositoryName
+            ? true
+            : false
+        }
         options={{
           placeholder: "Repository name",
-          value: formik.values.repoName,
-          onChangeText: formik.handleChange("repoName"),
+          value: formik.values.repositoryName,
+          onChangeText: formik.handleChange("repositoryName"),
         }}
       />
-      {formik.touched.repoName && formik.errors.repoName && (
-        <Text style={styles.textErrorItem}>{formik.errors.repoName}</Text>
+      {formik.touched.repositoryName && formik.errors.repositoryName && (
+        <Text style={styles.textErrorItem}>{formik.errors.repositoryName}</Text>
       )}
       <TextInput
         error={formik.touched.rating && formik.errors.rating ? true : false}
@@ -99,16 +116,16 @@ const ReviewForm = ({ onSubmit }: { onSubmit: (values: ReviewValues) => void }) 
         <Text style={styles.textErrorItem}>{formik.errors.rating}</Text>
       )}
       <TextInput
-        error={formik.touched.review && formik.errors.review ? true : false}
+        error={formik.touched.text && formik.errors.text ? true : false}
         options={{
           placeholder: "Review",
-          value: formik.values.review,
-          onChangeText: formik.handleChange("review"),
-          multiline: true
+          value: formik.values.text,
+          onChangeText: formik.handleChange("text"),
+          multiline: true,
         }}
       />
-      {formik.touched.review && formik.errors.review && (
-        <Text style={styles.textErrorItem}>{formik.errors.review}</Text>
+      {formik.touched.text && formik.errors.text && (
+        <Text style={styles.textErrorItem}>{formik.errors.text}</Text>
       )}
       {/* @ts-ignore */}
       <Pressable onPress={formik.handleSubmit} style={styles.textBlueBoxItem}>
@@ -116,29 +133,36 @@ const ReviewForm = ({ onSubmit }: { onSubmit: (values: ReviewValues) => void }) 
           Create a review
         </Text>
       </Pressable>
+      {error && <Text style={styles.textErrorItem}>{error}</Text>}
     </View>
   );
 };
 
-export const ReviewContainer = ({ onSubmit }: any) => {
-  return <ReviewForm onSubmit={onSubmit} />;
+export const ReviewContainer = ({ onSubmit, error }: reviewContainerProps) => {
+  return <ReviewForm onSubmit={onSubmit} error={error} />;
 };
 
 const Review = () => {
-  const [signIn] = useSignIn();
-  const navigate = useNavigate();
+  const [createReview] = useCreateReview();
+  const [error, setError] = useState("");
   const onSubmit = async (values: ReviewValues) => {
-    const { repoOwnerName, repoName, rating, review } = values;
+    const { ownerName, repositoryName, rating, text } = values;
     try {
       //@ts-ignore
-      await signIn({ repoOwnerName, repoName });
-      navigate("/");
+      await createReview({ ownerName, repositoryName, rating, text });
     } catch (e) {
+      //@ts-ignore
+      if (e instanceof ApolloError && typeof e.message === "string") {
+        setError(e.message);
+        setTimeout(() => {
+          setError("");
+        }, 5000);
+      }
       console.log(e);
     }
   };
 
-  return <ReviewContainer onSubmit={onSubmit} />;
+  return <ReviewContainer onSubmit={onSubmit} error={error} />;
 };
 
 export default Review;

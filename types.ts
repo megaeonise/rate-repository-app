@@ -16,8 +16,8 @@ export interface Values {
   password: string;
 }
 export interface ReviewValues {
-  repoOwnerName: string;
-  repoName: string;
+  ownerName: string;
+  repositoryName: string;
   rating: string;
-  review?: string;
+  text?: string;
 }
