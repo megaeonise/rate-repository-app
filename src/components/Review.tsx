@@ -8,6 +8,7 @@ import * as yup from "yup";
 import useCreateReview from "../hooks/useCreateReview";
 import { useState } from "react";
 import { ApolloError } from "@apollo/client";
+import { useNavigate } from "react-router-native";
 
 const initialValues = {
   ownerName: "",
@@ -127,8 +128,10 @@ const ReviewForm = ({ onSubmit, error }: reviewFormProps) => {
       {formik.touched.text && formik.errors.text && (
         <Text style={styles.textErrorItem}>{formik.errors.text}</Text>
       )}
-      {/* @ts-ignore */}
-      <Pressable onPress={formik.handleSubmit} style={styles.textBlueBoxItem}>
+      <Pressable
+        onPress={() => formik.handleSubmit()}
+        style={styles.textBlueBoxItem}
+      >
         <Text color="white" style={styles.textCenteredItem}>
           Create a review
         </Text>
@@ -145,13 +148,19 @@ export const ReviewContainer = ({ onSubmit, error }: reviewContainerProps) => {
 const Review = () => {
   const [createReview] = useCreateReview();
   const [error, setError] = useState("");
+  const navigate = useNavigate();
   const onSubmit = async (values: ReviewValues) => {
     const { ownerName, repositoryName, rating, text } = values;
     try {
-      //@ts-ignore
-      await createReview({ ownerName, repositoryName, rating, text });
+      const { data } = await createReview({
+        ownerName,
+        repositoryName,
+        rating,
+        text,
+      });
+      console.log(data.createReview.repositoryId);
+      navigate(`/${data.createReview.repositoryId}`);
     } catch (e) {
-      //@ts-ignore
       if (e instanceof ApolloError && typeof e.message === "string") {
         setError(e.message);
         setTimeout(() => {

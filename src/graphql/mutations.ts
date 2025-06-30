@@ -14,15 +14,16 @@ export const REVIEW = gql`
       id
       createdAt
       rating
-      repository {
-        userHasReviewed
-      }
-      repositoryId
       text
-      user {
-        id
-      }
-      userId
+      repositoryId
+    }
+  }
+`;
+
+export const SIGNUP = gql`
+  mutation ($user: CreateUserInput) {
+    createUser(user: $user) {
+      id
     }
   }
 `;

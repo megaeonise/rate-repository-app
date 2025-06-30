@@ -14,6 +14,7 @@ export interface Repository {
 export interface Values {
   username: string;
   password: string;
+  passwordConfirmation?: string;
 }
 export interface ReviewValues {
   ownerName: string;

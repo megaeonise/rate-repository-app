@@ -22,7 +22,7 @@ const useCreateReview = () => {
     return data;
   };
 
-  return [createReview, result];
+  return [createReview, result] as const;
 };
 
 export default useCreateReview;

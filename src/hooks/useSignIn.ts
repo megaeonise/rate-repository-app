@@ -21,7 +21,7 @@ const useSignIn = () => {
     return data;
   };
 
-  return [signIn, result];
+  return [signIn, result] as const;
 };
 
 export default useSignIn;

@@ -7,10 +7,14 @@ import theme from "../theme";
 import * as yup from "yup";
 import useSignIn from "../hooks/useSignIn";
 import { useNavigate } from "react-router-native";
+import { useState } from "react";
+import useSignUp from "../hooks/useSignUp";
+import { ApolloError } from "@apollo/client";
 
 const initialValues = {
   username: "",
   password: "",
+  passwordConfirmation: "",
 };
 
 const styles = StyleSheet.create({
@@ -46,23 +50,34 @@ const styles = StyleSheet.create({
 const validationSchema = yup.object().shape({
   username: yup
     .string()
-    .min(3, "Username must be at least 3 characters long")
+    .min(5, "Username must be at least 5 characters long")
+    .max(30, "Username must be at most 30 characters long")
     .required("Username is required"),
   password: yup
     .string()
-    .min(3, "Password must be at least 3 characters long")
+    .min(5, "Password must be at least 5 characters long")
+    .max(30, "Password must be at most 30 characters long")
     .required("Password is required"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf(
+      [yup.ref("password")],
+      "Password and password confirmation must match"
+    )
+    .required("Password confirmation is required"),
 });
 
-interface signInFormProps {
+interface signUpFormProps {
   onSubmit: (values: Values) => void;
+  error: string;
 }
 
-interface signInContainerProps {
+interface signUpContainerProps {
   onSubmit: (values: Values) => Promise<void>;
+  error: string;
 }
 
-const SignInForm = ({ onSubmit }: signInFormProps) => {
+const SignInForm = ({ onSubmit, error }: signUpFormProps) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -94,36 +109,73 @@ const SignInForm = ({ onSubmit }: signInFormProps) => {
       {formik.touched.password && formik.errors.password && (
         <Text style={styles.textErrorItem}>{formik.errors.password}</Text>
       )}
+      <TextInput
+        error={
+          formik.touched.passwordConfirmation &&
+          formik.errors.passwordConfirmation
+            ? true
+            : false
+        }
+        options={{
+          placeholder: "Password confirmation",
+          value: formik.values.passwordConfirmation,
+          onChangeText: formik.handleChange("passwordConfirmation"),
+          secureTextEntry: true,
+        }}
+      />
+      {formik.touched.passwordConfirmation &&
+        formik.errors.passwordConfirmation && (
+          <Text style={styles.textErrorItem}>
+            {formik.errors.passwordConfirmation}
+          </Text>
+        )}
       <Pressable
         onPress={() => formik.handleSubmit()}
         style={styles.textBlueBoxItem}
       >
         <Text color="white" style={styles.textCenteredItem}>
-          Sign In
+          Sign Up
         </Text>
       </Pressable>
+      {error && <Text style={styles.textErrorItem}>{error}</Text>}
     </View>
   );
 };
 
-export const SignInContainer = ({ onSubmit }: signInContainerProps) => {
-  return <SignInForm onSubmit={onSubmit} />;
+export const SignInContainer = ({ onSubmit, error }: signUpContainerProps) => {
+  return <SignInForm onSubmit={onSubmit} error={error} />;
 };
 
-const SignIn = () => {
+const SignUp = () => {
   const [signIn] = useSignIn();
+  const [signUp] = useSignUp();
   const navigate = useNavigate();
+  const [error, setError] = useState("");
   const onSubmit = async (values: Values) => {
-    const { username, password } = values;
-    try {
-      await signIn({ username, password });
-      navigate("/");
-    } catch (e) {
-      console.log(e);
+    const { username, password, passwordConfirmation } = values;
+    if (password === passwordConfirmation) {
+      try {
+        await signUp({ username, password });
+        await signIn({ username, password });
+        navigate("/");
+      } catch (e) {
+        if (e instanceof ApolloError && typeof e.message === "string") {
+          setError(e.message);
+          setTimeout(() => {
+            setError("");
+          }, 5000);
+        }
+        console.log(e);
+      }
+    } else {
+      setError("Password and password confirmation must match");
+      setTimeout(() => {
+        setError("");
+      }, 5000);
     }
   };
 
-  return <SignInContainer onSubmit={onSubmit} />;
+  return <SignInContainer onSubmit={onSubmit} error={error} />;
 };
 
-export default SignIn;
+export default SignUp;
