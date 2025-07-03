@@ -7,7 +7,7 @@ import { FC } from "react";
 import theme from "../theme";
 
 interface Props {
-  error: boolean;
+  error?: boolean;
   options: TextInputProps;
 }
 
