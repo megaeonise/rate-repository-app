@@ -158,7 +158,6 @@ const Review = () => {
         rating,
         text,
       });
-      console.log(data.createReview.repositoryId);
       navigate(`/${data.createReview.repositoryId}`);
     } catch (e) {
       if (e instanceof ApolloError && typeof e.message === "string") {

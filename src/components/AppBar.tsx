@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
-  const { data } = useMe();
+  const { data } = useMe(false);
   const signOut = useSignOut();
   if (data && data !== undefined) {
     if (data.me) {
@@ -31,6 +31,7 @@ const AppBar = () => {
           <ScrollView horizontal>
             <AppBarTab item="Repository" link="/" />
             <AppBarTab item="Create a review" link="/review" />
+            <AppBarTab item="My reviews" link="/myReviews" />
             <AppBarTab item="Sign Out" onClick={signOut} />
           </ScrollView>
         </View>

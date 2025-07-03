@@ -7,7 +7,6 @@ interface repositoriesProps {
 }
 
 const useRepositories = ({ orderBy, orderDirection }: repositoriesProps) => {
-  console.log(orderDirection, orderBy);
   const { data, error, loading } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: `cache-and-network`,
     variables: { orderDirection: orderDirection, orderBy: orderBy },
