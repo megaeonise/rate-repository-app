@@ -86,6 +86,7 @@ interface Props {
   query: string;
   sort: number;
   setSort: React.Dispatch<React.SetStateAction<number>>;
+  onEndReach: () => void;
 }
 
 export class RepositoryListContainer extends React.Component<Props, {}> {
@@ -148,6 +149,8 @@ export class RepositoryListContainer extends React.Component<Props, {}> {
           <RepositoryItem item={item} navigate={props.navigate} />
         )}
         ListHeaderComponent={this.renderHeader}
+        onEndReached={props.onEndReach}
+        onEndReachedThreshold={0.5}
         // other props
       />
     );
@@ -163,12 +166,17 @@ const RepositoryList = () => {
     ["RATING_AVERAGE", "DESC"],
     ["RATING_AVERAGE", "ASC"],
   ];
-  const { data } = useRepositories({
+  const { data, fetchMore } = useRepositories({
     orderBy: sortArray[sort][0],
     orderDirection: sortArray[sort][1],
     searchKeyword: debouncedQuery,
+    first: 3,
   });
+  console.log(data);
   const navigate = useNavigate();
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   return (
     <RepositoryListContainer
@@ -178,6 +186,7 @@ const RepositoryList = () => {
       query={query}
       sort={sort}
       setSort={setSort}
+      onEndReach={onEndReach}
     />
   );
 };

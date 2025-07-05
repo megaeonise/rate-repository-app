@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
-  const { data } = useMe(false);
+  const { data, refetch } = useMe(false);
   const signOut = useSignOut();
   if (data && data !== undefined) {
     if (data.me) {

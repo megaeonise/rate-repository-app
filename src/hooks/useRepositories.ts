@@ -5,25 +5,49 @@ interface repositoriesProps {
   orderDirection: String;
   orderBy: String;
   searchKeyword: String;
+  first: Number;
 }
 
 const useRepositories = ({
   orderBy,
   orderDirection,
   searchKeyword,
+  first,
 }: repositoriesProps) => {
   console.log(searchKeyword);
-  const { data, error, loading } = useQuery(GET_REPOSITORIES, {
+  const { data, fetchMore, loading, ...result } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: `cache-and-network`,
     variables: {
       orderDirection: orderDirection,
       orderBy: orderBy,
       searchKeyword: searchKeyword,
+      first: first,
     },
   });
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage;
 
-  if (!error && !loading) return { data, loading };
-  return { error, loading };
+    if (!canFetchMore) {
+      return;
+    }
+
+    fetchMore({
+      variables: {
+        orderDirection: orderDirection,
+        orderBy: orderBy,
+        searchKeyword: searchKeyword,
+        first: first,
+        after: data.repositories.pageInfo.endCursor,
+      },
+    });
+  };
+
+  return {
+    data,
+    fetchMore: handleFetchMore,
+    loading,
+    ...result,
+  };
 };
 
 export default useRepositories;
